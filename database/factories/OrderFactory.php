@@ -17,7 +17,14 @@ class OrderFactory extends Factory
     public function definition()
     {
         return [
-            //
+            // 'user_id' => fake()->name(),
+            // 'item_count' => fake()->paragraph(),
+            // 'order_status' => fake()->randomDigit(),
+            // 'order_total' => fake()->randomDigit(),
+            // 'order_discount' => '3',
+            // 'order_courier' => '3',
+            // 'order_payment_method' => '3',
+            // 'order_delivery_address' => fake()->paragraph(),
         ];
     }
 }

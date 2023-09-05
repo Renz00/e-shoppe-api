@@ -14,7 +14,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::all();
+        return response()->json($orders);
     }
 
     /**
@@ -25,7 +26,18 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $storedOrder = Order::create([
+            'user_id' => $request->input('id'),
+            'item_count' => $request->input('count'),
+            'order_status' => $request->input('status'),
+            'order_total' => $request->input('total'),
+            'order_discount' => $request->input('discount'),
+            'order_courier' => $request->input('courier'),
+            'order_payment_method' => $request->input('payment_method'),
+            'order_delivery_address' => $request->input('delivery_address'),
+        ]);
+
+        return response()->json($storedOrder);
     }
 
     /**
@@ -36,7 +48,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        return response()->json($order);
     }
 
     /**
@@ -48,7 +60,19 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        //
+        $result = Order::where('id', $order->id)
+            ->update([
+                'user_id' => $request->input('id'),
+                'item_count' => $request->input('count'),
+                'order_status' => $request->input('status'),
+                'order_total' => $request->input('total'),
+                'order_discount' => $request->input('discount'),
+                'order_courier' => $request->input('courier'),
+                'order_payment_method' => $request->input('payment_method'),
+                'order_delivery_address' => $request->input('delivery_address'),
+            ]);
+
+        return response()->json($result);
     }
 
     /**
@@ -59,6 +83,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        $result = Order::destroy($order->id);
+        return response()->json($result);
     }
 }

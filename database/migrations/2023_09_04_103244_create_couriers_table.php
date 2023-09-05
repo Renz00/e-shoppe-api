@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('couriers', function (Blueprint $table) {
             $table->id();
             $table->string('courier_name')->unique();
-            $table->string('courier_price');
-            $table->string('courier_count');
+            $table->float('courier_price', 8, 2);
+            $table->integer('courier_count');
             $table->string('courier_eta');
             $table->timestamps();
         });
