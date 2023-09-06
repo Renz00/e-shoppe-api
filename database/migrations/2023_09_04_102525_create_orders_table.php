@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->integer('item_count');
             $table->foreignId('order_status');
             $table->integer('order_total');
