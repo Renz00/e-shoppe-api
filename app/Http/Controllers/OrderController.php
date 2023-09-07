@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Http\Controllers\OrderProductController;
 
 class OrderController extends Controller
 {
+
+    protected $OrderProductController;
+
+    public function __construct(OrderProductController $OrderProductController)
+    {
+        $this->OrderProductController = $OrderProductController;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -26,18 +35,31 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $storedOrder = Order::create([
-            'user_id' => $request->input('id'),
-            'item_count' => $request->input('count'),
-            'order_status' => $request->input('status'),
-            'order_total' => $request->input('total'),
-            'order_discount' => $request->input('discount'),
-            'order_courier' => $request->input('courier'),
-            'order_payment_method' => $request->input('payment_method'),
-            'order_delivery_address' => $request->input('delivery_address'),
-        ]);
+        // try {
+            //Will return the data of the stored order
+            $storedOrder = Order::create([
+                'user_id' => $request->input('order')['id'],
+                'item_count' => $request->input('order')['count'],
+                'order_status' => $request->input('order')['status'],
+                'order_total' => $request->input('order')['total'],
+                'order_discount' => $request->input('order')['discount'],
+                'order_courier' => $request->input('order')['courier'],
+                'order_payment_method' => $request->input('order')['payment_method'],
+                'order_delivery_address' => $request->input('order')['delivery_address'],
+            ]);
 
-        return response()->json($storedOrder);
+            $result = $this->OrderProductController->store($storedOrder, $request->input('order_products'));
+
+            if ($result == true){
+                return response()->json(["order" => $storedOrder, "order_products" => $request->input('order_products')]);
+            }
+            else {
+                return response()->json(['message' => 'An error occurred while saving. #1-2'], 500);
+            }
+
+        // } catch (\Exception $e) {
+        //     return response()->json(['message' => 'An error occurred while saving. #1-1'], 500);
+        // }
     }
 
     /**
@@ -48,7 +70,8 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        return response()->json($order);
+        $order_products = $this->OrderProductController->show($order->id);
+        return response()->json(["order" => $order, "order_products" => $order_products]);
     }
 
     /**
@@ -60,19 +83,32 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        $result = Order::where('id', $order->id)
-            ->update([
-                'user_id' => $request->input('id'),
-                'item_count' => $request->input('count'),
-                'order_status' => $request->input('status'),
-                'order_total' => $request->input('total'),
-                'order_discount' => $request->input('discount'),
-                'order_courier' => $request->input('courier'),
-                'order_payment_method' => $request->input('payment_method'),
-                'order_delivery_address' => $request->input('delivery_address'),
+        // try{
+            //Will return a boolean of the result
+            $updateResult = $order->update([
+                'user_id' => $request->input('order')['id'],
+                'item_count' => $request->input('order')['count'],
+                'order_status' => $request->input('order')['status'],
+                'order_total' => $request->input('order')['total'],
+                'order_discount' => $request->input('order')['discount'],
+                'order_courier' => $request->input('order')['courier'],
+                'order_payment_method' => $request->input('order')['payment_method'],
+                'order_delivery_address' => $request->input('order')['delivery_address'],
             ]);
 
-        return response()->json($result);
+            $result = $this->OrderProductController->update($order, $request->input('order_products'));
+
+            if ($result == true && $updateResult == true){
+                return response()->json(["order" => $request->input('order'), "order_products" => $request->input('order_products')]);
+            }
+            else {
+                return response()->json(['message' => 'An error occurred while updating. #1-2'], 500);
+            }
+
+        // }
+        // catch (\Exception $e){
+        //     return response()->json(['message' => 'An error occurred while updating. #1-1'], 500);
+        // }
     }
 
     /**
@@ -83,7 +119,14 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        $result = Order::destroy($order->id);
-        return response()->json($result);
+        $deletedResult = Order::destroy($order->id);
+
+        if ($deletedResult == true){
+            return response()->json(["result" => $deletedResult]);
+        }
+        else {
+            return response()->json(['message' => 'An error occurred while deleting. #1-1'], 500);
+        }
+
     }
 }

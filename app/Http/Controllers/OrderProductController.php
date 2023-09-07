@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order_Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\Order_Product;
 
 class OrderProductController extends Controller
 {
@@ -18,68 +19,72 @@ class OrderProductController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * 
+     * @param  Object $storedOrder
+     * @param  Array $order_products
+     * @return Boolean
      */
-    public function store(Request $request)
+    public function store($storedOrder, $order_products)
     {
-        //
+        $resultCount = 0;
+
+        foreach ($order_products as $product) {
+            // try {
+                $result = Order_Product::create([
+                    'order_id' => $storedOrder->id,
+                    'product_id' => $product['id'],
+                    'total_price' => $product['total_price'],
+                    'count' => $product['count']
+                ]);
+
+                switch ($result){
+                    case true:
+                        $resultCount++;
+                        break;
+                    default:
+                        break;
+                }
+
+            // } catch (\Exception $e) {
+            //     return response()->json(['message' => 'An error occurred. #1-2'], 500);
+            // }
+        }
+        
+        if ($resultCount == count($order_products)){
+            return true;
+        }
+        else {
+            return false;
+        }
+        
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Order_Product  $order_Product
+     * @param  int  $orderId
      * @return \Illuminate\Http\Response
      */
-    public function show(Order_Product $order_Product)
+    public function show($orderId)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Order_Product  $order_Product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Order_Product $order_Product)
-    {
-        //
+        return Order_Product::where('order_id', $orderId)->get();
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Order_Product  $order_Product
-     * @return \Illuminate\Http\Response
+     * @param  Object $orderId
+     * @param  Array $order_products
+     * @return Boolean
      */
-    public function update(Request $request, Order_Product $order_Product)
+    public function update($order, $order_products)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Order_Product  $order_Product
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Order_Product $order_Product)
-    {
-        //
+        //Delete all existing order products
+        Order_Product::where('order_id', $order->id)->delete();
+        //Store new order products
+        $result = $this->store($order, $order_products);
+        
+        return $result;
     }
 }

@@ -16,7 +16,7 @@ class ProductController extends Controller
     {
         $products = Product::all();
 
-        return response()->json($products);
+        return response()->json(["products" => $products]);
     }
 
     /**
@@ -38,7 +38,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return response()->json($product);
+        return response()->json(["products" => $product]);
     }
 
     /**
