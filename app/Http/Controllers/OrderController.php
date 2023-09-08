@@ -18,12 +18,12 @@ class OrderController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
+     * @param Int $status
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function fetchOrders($status)
     {
-        $orders = Order::all();
+        $orders = Order::where('order_status', $status)->paginate(12);
         return response()->json($orders);
     }
 

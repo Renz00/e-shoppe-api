@@ -14,7 +14,46 @@ class FavouriteController extends Controller
      */
     public function index()
     {
-        //
+        $favourites = Favourite::where('user_id', auth()->user())
+        ->orderBy('id', 'DESC')
+        ->paginate(12);
+
+        return response()->json(["favourites" => $favourites]);
+    }
+
+    /**
+     * Fetch filtered products.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function sortFavourites(Request $request)
+    {
+        try {
+            $validateFilter = $request->validate([
+                'sort' => 'required|string|max:50'
+            ]);
+        }
+        catch (\Exception $e){
+            return response()->json($e);
+        }
+        
+        switch ($request->input('sort')){
+            case 'asc':
+                $favourites = Favourite::where('user_id', auth()->user())
+                ->orderBy('id', 'ASC')
+                ->paginate(12);
+                break;
+            case 'desc':
+                $favourites = Favourite::where('user_id', auth()->user())
+                ->orderBy('id', 'DESC')
+                ->paginate(12);
+                break;
+            default:
+                break;
+        }
+
+        return response()->json(["favourites" => $favourites]);
     }
 
     /**

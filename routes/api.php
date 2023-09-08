@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\FavouriteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -19,8 +23,23 @@ use App\Http\Controllers\ProductController;
 Route::prefix('/v1')->group(function () {
 
     Route::resource('products', ProductController::class);
-    Route::resource('users', UserController::class);
+    Route::get('/products/{search_text}', [ProductController::class, 'searchProducts']);
+    Route::post('/products/filter', [ProductController::class, 'filterProducts']);
+
     Route::resource('orders', OrderController::class);
+    Route::get('orders/status/{status}', [OrderController::class, 'fetchOrders']);
+
+    Route::resource('users', UserController::class);
+
+    Route::resource('/favourites', FavouriteController::class);
+    Route::post('/favourites/sort', [FavouriteController::class, 'sortFavourites']);
+ 
+});
+
+Route::prefix('/auth')->group(function () {
+    Route::post('login', LoginController::class);
+    Route::post('register', RegisterController::class);
+    Route::post('logout', LogoutController::class)->middleware('auth:sanctum');
 });
 
 
