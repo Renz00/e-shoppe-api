@@ -7,6 +7,5 @@
 1. Products search api
 2. Auth api (login, register, logout)
 
-#To do
-1. Filtering
-2. Add grid view option to Favourites page frontend
+# To do
+1. Auth integration to resource routes (nav guards, middleware, token handling)

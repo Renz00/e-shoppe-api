@@ -23,7 +23,7 @@ use App\Http\Controllers\ProductController;
 Route::prefix('/v1')->group(function () {
 
     Route::resource('products', ProductController::class);
-    Route::get('/products/{search_text}', [ProductController::class, 'searchProducts']);
+    Route::get('/search-products/{search_slug}', [ProductController::class, 'searchProducts']);
     Route::post('/products/filter', [ProductController::class, 'filterProducts']);
 
     Route::resource('orders', OrderController::class);
@@ -33,7 +33,7 @@ Route::prefix('/v1')->group(function () {
 
     Route::resource('/favourites', FavouriteController::class);
     Route::post('/favourites/sort', [FavouriteController::class, 'sortFavourites']);
- 
+
 });
 
 Route::prefix('/auth')->group(function () {

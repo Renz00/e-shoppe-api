@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -38,7 +39,7 @@ class ProductController extends Controller
         // catch (\Exception $e){
         //     return response()->json($e);
         // }
-        
+
         $products = Product::whereIn('product_category', $request->input('category'))
         ->whereIn('product_rating', $request->input('rating'))
         ->whereBetween('product_price', [$request->input('min_price'), $request->input('max_price')])
@@ -49,16 +50,17 @@ class ProductController extends Controller
 
     /**
      * Search a product using product_name and product_description.
-     * 
-     * @param  \Illuminate\Http\Request  $request
+     *
+     * @param  String $search_slug
      * @return \Illuminate\Http\Response
      */
-    public function searchProduct($search_text)
+    public function searchProducts($search_slug)
     {
-        $searchResult = Product::search($search_text)->get();
+        $searchText = Str::replace('-', ' ', $search_slug);
+        $searchResult = Product::search($searchText)->paginate(12);
 
-        if (count($searchResult)>0){
-            return response()->json(["search_result" => $searchResult])->paginate(12);
+        if ($searchResult){
+            return response()->json(["search_result" => $searchResult]);
         }
         else {
             return response()->json(['message' => 'No results found.']);

@@ -20,12 +20,10 @@ class ProductFactory extends Factory
         return [
             'product_name' => fake()->sentence(),
             'product_description' => fake()->paragraph(),
-            'product_price' => fake()->randomDigit(),
+            'product_price' => fake()->randomFloat(2),
             'product_discount' => fake()->randomDigit(),
-            'product_rating' => '1',
-            //'product_category' => '1' // Gadgets
-            //'product_category' => '2' // Cosmetics
-            'product_category' => '3' // Apparel
+            'product_rating' => fake()->numberBetween(0, 5),
+            'product_category' => fake()->numberBetween(1, 3)
         ];
     }
 }
