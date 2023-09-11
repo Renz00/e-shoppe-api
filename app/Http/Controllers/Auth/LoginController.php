@@ -24,15 +24,15 @@ class LoginController extends Controller
            return response()->json(['result' => false]);
         }
         else {
-            if (count($user)>0){
-                return response()->json([
-                    'user' => $user,
-                    'token' => $user->createToken('api_token')->plainTextToken
-                ]);
-            }
-            else {
-                return response()->json(['message' => "An error occured while loggin in. #1-1"]);
-            }
+            return response()->json([
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role
+                ],
+                'token' => $user->createToken('api_token')->plainTextToken
+            ]);
         } 
     }
 }

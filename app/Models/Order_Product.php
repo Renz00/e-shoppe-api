@@ -16,5 +16,4 @@ class Order_Product extends Model
         'total_price'
     ];
 
-
 }

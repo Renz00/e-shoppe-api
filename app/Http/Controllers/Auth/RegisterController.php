@@ -38,10 +38,7 @@ class RegisterController extends Controller
         ]);
 
         if (count($user)>0){
-            return response()->json([
-                'user' => $user,
-                'token' => $user->createToken('api_token')->plainTextToken
-            ]);
+            return response()->json(['result' => 1]);
         }
         else {
             return response()->json(['message' => "An error occured while registering. #1-1"]);

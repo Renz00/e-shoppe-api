@@ -18,7 +18,7 @@ class LogoutController extends Controller
         $result = $request->user()->currentAccessToken()->delete();
 
         if ($result == 1){
-            return response()->json($result);
+            return response()->json(['result' => $result]);
         }
         else {
             return response()->json(['message' => "An error occured while logging out. #1-1"]);

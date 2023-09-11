@@ -69,7 +69,7 @@ class FavouriteController extends Controller
             "product_id" => $request->input('product_id'),
         ]);
 
-        if (count($storedFavourite)>0){
+        if ($storedFavourite){
             return response()->json(['favourite' => $storedFavourite]);
         }
         else {

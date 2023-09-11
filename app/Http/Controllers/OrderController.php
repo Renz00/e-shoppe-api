@@ -14,6 +14,11 @@ class OrderController extends Controller
     public function __construct(OrderProductController $OrderProductController)
     {
         $this->OrderProductController = $OrderProductController;
+
+        //Will check the OrderPolicy.php for authorization
+        //for all methods using the Task Order
+        $this->authorizeResource(Order::class);
+
     }
 
     /**

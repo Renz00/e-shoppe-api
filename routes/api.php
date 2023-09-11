@@ -4,7 +4,6 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\FavouriteController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
@@ -20,19 +19,20 @@ use App\Http\Controllers\ProductController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 Route::prefix('/v1')->group(function () {
 
     Route::resource('products', ProductController::class);
-    Route::get('/search-products/{search_slug}', [ProductController::class, 'searchProducts']);
-    Route::post('/products/filter', [ProductController::class, 'filterProducts']);
+    Route::get('/search-products/{search_slug}', [ProductController::class, 'searchProducts'])->name('search.products');
+    Route::post('/products/filter', [ProductController::class, 'filterProducts'])->name('filter.products');
 
-    Route::resource('orders', OrderController::class);
-    Route::get('orders/status/{status}', [OrderController::class, 'fetchOrders']);
+    Route::resource('orders', OrderController::class)->middleware('auth:sanctum');
+    Route::get('orders/status/{status}', [OrderController::class, 'fetchOrders'])->name('fetch.orders')->middleware('auth:sanctum');
 
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->middleware('auth:sanctum');
 
-    Route::resource('/favourites', FavouriteController::class);
-    Route::post('/favourites/sort', [FavouriteController::class, 'sortFavourites']);
+    Route::resource('/favourites', FavouriteController::class)->middleware('auth:sanctum');
+    Route::post('/favourites/sort', [FavouriteController::class, 'sortFavourites'])->name('sort.favourites')->middleware('auth:sanctum');
 
 });
 
@@ -40,9 +40,4 @@ Route::prefix('/auth')->group(function () {
     Route::post('login', LoginController::class);
     Route::post('register', RegisterController::class);
     Route::post('logout', LogoutController::class)->middleware('auth:sanctum');
-});
-
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
 });
