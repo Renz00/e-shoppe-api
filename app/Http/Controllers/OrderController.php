@@ -43,14 +43,14 @@ class OrderController extends Controller
         // try {
             //Will return the data of the stored order
             $storedOrder = Order::create([
-                'user_id' => $request->input('order')['id'],
-                'item_count' => $request->input('order')['count'],
-                'order_status' => $request->input('order')['status'],
-                'order_total' => $request->input('order')['total'],
-                'order_discount' => $request->input('order')['discount'],
-                'order_courier' => $request->input('order')['courier'],
-                'order_payment_method' => $request->input('order')['payment_method'],
-                'order_delivery_address' => $request->input('order')['delivery_address'],
+                'user_id' => $request->order['id'],
+                'item_count' => $request->order['count'],
+                'order_status' => $request->order['status'],
+                'order_total' => $request->order['total'],
+                'order_discount' => $request->order['discount'],
+                'order_courier' => $request->order['courier'],
+                'order_payment_method' => $request->order['payment_method'],
+                'order_delivery_address' => $request->order['delivery_address'],
             ]);
 
             $result = $this->OrderProductController->store($storedOrder, $request->input('order_products'));
@@ -91,20 +91,20 @@ class OrderController extends Controller
         // try{
             //Will return a boolean of the result
             $updateResult = $order->update([
-                'user_id' => $request->input('order')['id'],
-                'item_count' => $request->input('order')['count'],
-                'order_status' => $request->input('order')['status'],
-                'order_total' => $request->input('order')['total'],
-                'order_discount' => $request->input('order')['discount'],
-                'order_courier' => $request->input('order')['courier'],
-                'order_payment_method' => $request->input('order')['payment_method'],
-                'order_delivery_address' => $request->input('order')['delivery_address'],
+                'user_id' => $request->order['id'],
+                'item_count' => $request->order['count'],
+                'order_status' => $request->order['status'],
+                'order_total' => $request->order['total'],
+                'order_discount' => $request->order['discount'],
+                'order_courier' => $request->order['courier'],
+                'order_payment_method' => $request->order['payment_method'],
+                'order_delivery_address' => $request->order['delivery_address'],
             ]);
 
-            $result = $this->OrderProductController->update($order, $request->input('order_products'));
+            $result = $this->OrderProductController->update($order, $request->order_products);
 
             if ($result == true && $updateResult == true){
-                return response()->json(["order" => $request->input('order'), "order_products" => $request->input('order_products')]);
+                return response()->json(["order" => $request->order, "order_products" => $request->order_products]);
             }
             else {
                 return response()->json(['message' => 'An error occurred while updating. #1-2'], 500);

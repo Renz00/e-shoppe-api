@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
@@ -17,33 +18,32 @@ class RegisterController extends Controller
      */
     public function __invoke(Request $request)
     {
-        try{
-            $validationResult = $request->validate([
-                'name' => 'required|string|max:150',
-                'email' => 'required|email|unique:users',
-                'password' => 'required|confirmed|min:8'
-            ]);
-        }
-        catch (\Exception $e){
-            return response()->json($e);
-        }
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:150'],
+            'email' => ['required', 'email', 'unique:users'],
+            'phone' => ['required', 'numeric'],
+            'password' => ['required', 'confirmed', 'min:8']
+        ]);
 
-        $hashedPassword = Hash::make($request->input('password'));
+        if($validator->fails()){
+            return response()->json(['errors'=>$validator->messages()]);
+         }
+
+        $hashedPassword = Hash::make($request->password);
 
         $user = User::create([
-            "name" => $request->input('name'),
-            "email" => $request->input('email'),
+            "name" => $request->name,
+            "email" => $request->email,
+            "phone" => $request->phone,
             "role" => "customer",
             "password" => $hashedPassword
         ]);
 
-        if (count($user)>0){
+        if ($user->first()){
             return response()->json(['result' => 1]);
         }
         else {
             return response()->json(['message' => "An error occured while registering. #1-1"]);
         }
-
-        
     }
 }

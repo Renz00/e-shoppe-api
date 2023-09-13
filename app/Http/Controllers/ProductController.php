@@ -40,9 +40,9 @@ class ProductController extends Controller
         //     return response()->json($e);
         // }
 
-        $products = Product::whereIn('product_category', $request->input('category'))
-        ->whereIn('product_rating', $request->input('rating'))
-        ->whereBetween('product_price', [$request->input('min_price'), $request->input('max_price')])
+        $products = Product::whereIn('product_category', $request->category)
+        ->whereIn('product_rating', $request->rating)
+        ->whereBetween('product_price', [$request->min_price, $request->max_price])
         ->get();
 
         return response()->json(["products" => $products]);

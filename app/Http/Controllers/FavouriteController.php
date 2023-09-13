@@ -65,8 +65,8 @@ class FavouriteController extends Controller
     public function store(Request $request)
     {
         $storedFavourite = Favourite::create([
-            "user_id" => $request->input('user_id'),
-            "product_id" => $request->input('product_id'),
+            "user_id" => $request->user_id,
+            "product_id" => $request->product_id,
         ]);
 
         if ($storedFavourite){
@@ -100,8 +100,8 @@ class FavouriteController extends Controller
     public function update(Request $request, Favourite $favourite)
     {
         $updatedFavourite = $favourite->update([
-            "user_id" => $request->input('user_id'),
-            "product_id" => $request->input('product_id'),
+            "user_id" => $request->user_id,
+            "product_id" => $request->product_id,
         ]);
 
         if ($updatedFavourite == true){
