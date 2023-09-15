@@ -8,15 +8,32 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    protected $limit;
+
+    public function __construct()
+    {
+        $this->limit = 12; 
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        $products = Product::latest()->paginate(12);
+    {   
+        $products = Product::latest()->limit(12)->get();
 
+        return response()->json(["products" => $products]);
+    }
+
+    public function loadMore($limit){
+        $products = Product::latest()->limit($limit)->get();
+        return response()->json(["products" => $products]);
+    }
+
+    public function paginatedProducts(){
+        $products = Product::latest()->paginate(12);
         return response()->json(["products" => $products]);
     }
 

@@ -23,6 +23,8 @@ use App\Http\Controllers\ProductController;
 Route::prefix('/v1')->group(function () {
 
     Route::resource('products', ProductController::class);
+    Route::get('/products/load-more/{limit}', [ProductController::class, 'loadMore'])->name('loadmore.products');
+    Route::get('/products/fetch/paginated', [ProductController::class, 'paginatedProducts'])->name('paginated.products');
     Route::get('/search-products/{search_slug}', [ProductController::class, 'searchProducts'])->name('search.products');
     Route::post('/products/filter', [ProductController::class, 'filterProducts'])->name('filter.products');
 
