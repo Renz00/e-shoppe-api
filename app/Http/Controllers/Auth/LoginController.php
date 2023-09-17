@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Closure;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
+    private $userPassword;
+
     /**
      * Handle the incoming request.
      *
@@ -17,22 +21,31 @@ class LoginController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'exists:App\Models\User,email'],
+            'password' => ['required','min:8','max:50', ]
+        ], $messages = [
+            'exists' => 'Your E-mail does not exist.',
+        ]); // adding custom error messages
 
-        //if $user is empty or password is incorrect
-        if (!$user || !Hash::check($request->password, $user->password)){
-           return response()->json(['result' => false]);
+        if ($validator->fails()){
+            return response()->json(['errors'=>$validator->messages()]);
         }
-        else {
-            return response()->json([
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role' => $user->role
-                ],
-                'token' => $user->createToken('api_token')->plainTextToken
-            ]);
-        } 
+
+        $user = User::where('email', $request->email)->first();
+        if ($user && !Hash::check($request->password, $user->password)){
+            $errorMessages = $validator->messages()->add('password', 'Password is incorrect');
+            return response()->json(['errors'=>$errorMessages]);
+        }
+
+        return response()->json([
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role
+            ],
+            'token' => $user->createToken('api_token')->plainTextToken
+        ]);
     }
 }

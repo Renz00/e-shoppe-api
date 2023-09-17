@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    protected $limit;
+    // protected $limit;
 
-    public function __construct()
-    {
-        $this->limit = 12; 
-    }
+    // public function __construct()
+    // {
+    //     $this->limit = 12;
+    // }
 
     /**
      * Display a listing of the resource.
@@ -21,19 +22,19 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {   
-        $products = Product::latest()->limit(12)->get();
+    {
+        $products = Product::orderBy('product_rating', 'DESC')->limit(12)->get();
 
         return response()->json(["products" => $products]);
     }
 
     public function loadMore($limit){
-        $products = Product::latest()->limit($limit)->get();
+        $products = Product::orderBy('product_rating', 'DESC')->limit($limit)->get();
         return response()->json(["products" => $products]);
     }
 
     public function paginatedProducts(){
-        $products = Product::latest()->paginate(12);
+        $products = Product::orderBy('product_rating', 'DESC')->paginate(12);
         return response()->json(["products" => $products]);
     }
 
@@ -46,12 +47,12 @@ class ProductController extends Controller
     public function filterProducts(Request $request)
     {
         // try {
-            $validateFilter = $request->validate([
+            Validator::make($request->all(), [
                 'category' => 'required',
                 'rating' => 'required',
-                'min_price' => 'required|numeric|max:500000|min:0',
-                'max_price' => 'required|numeric|max:500000|min:0'
-            ]);
+                'min_price' => 'required|numeric|max:50000|min:0',
+                'max_price' => 'required|numeric|max:50000|min:0'
+            ])->validate();
         // }
         // catch (\Exception $e){
         //     return response()->json($e);
@@ -60,7 +61,7 @@ class ProductController extends Controller
         $products = Product::whereIn('product_category', $request->category)
         ->whereIn('product_rating', $request->rating)
         ->whereBetween('product_price', [$request->min_price, $request->max_price])
-        ->get();
+        ->paginate(12);
 
         return response()->json(["products" => $products]);
     }
