@@ -78,7 +78,7 @@ class ProductController extends Controller
         $searchResult = Product::search($searchText)->paginate(12);
 
         if ($searchResult){
-            return response()->json(["search_result" => $searchResult]);
+            return response()->json(["products" => $searchResult]);
         }
         else {
             return response()->json(['message' => 'No results found.']);
