@@ -9,4 +9,8 @@ class Status extends Model
 {
     use HasFactory;
 
+    // public function order(){
+    //     return $this->belongsTo(Order::class, 'order_status');
+    // }
+
 }

@@ -21,8 +21,19 @@ class Order extends Model
         'order_delivery_address',
     ];
 
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
+    // public function user(){
+    //     return $this->belongsTo(User::class, 'id');
+    // }
+    
+    // public function status(){
+    //     return $this->hasOne(Status::class, 'id');
+    // }
 
+    // public function courier(){
+    //     return $this->hasOne(Courier::class, 'id');
+    // }
+
+    // public function payment(){
+    //     return $this->hasOne(Payment::class, 'id');
+    // }
 }

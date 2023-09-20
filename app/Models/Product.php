@@ -19,4 +19,5 @@ class Product extends Model
             "product_name" => $this->product_name
         ];
     }
+
 }

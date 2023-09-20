@@ -45,10 +45,10 @@ class User extends Authenticatable
     ];
 
     public function orders(){
-        return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class, 'user_id');
     }
 
     public function favourites(){
-        return $this->hasMany(Favourite::class);
+        return $this->hasMany(Favourite::class, 'user_id');
     }
 }

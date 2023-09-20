@@ -9,4 +9,7 @@ class Courier extends Model
 {
     use HasFactory;
 
+    // public function order(){
+    //     return $this->belongsTo(Order::class, 'order_courier');
+    // }
 }

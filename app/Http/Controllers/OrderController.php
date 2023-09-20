@@ -16,9 +16,14 @@ class OrderController extends Controller
         $this->OrderProductController = $OrderProductController;
 
         //Will check the OrderPolicy.php for authorization
-        //for all methods using the Task Order
+        //for all methods using the Order model
         $this->authorizeResource(Order::class);
 
+    }
+
+    public function index(){
+        $orders = Order::all();
+        return response()->json(['orders' => $orders]);
     }
 
     /**

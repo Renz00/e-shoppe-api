@@ -54,7 +54,7 @@ class OrderPolicy
      */
     public function update(User $user, Order $order)
     {
-        //checks if the task belongs to the current user
+        //checks if the order belongs to the current user
         return $user->id == $order->user_id;
     }
 
@@ -67,7 +67,7 @@ class OrderPolicy
      */
     public function delete(User $user, Order $order)
     {
-       //checks if the task belongs to the current user
+       //checks if the order belongs to the current user
        return $user->id == $order->user_id;
     }
 }
