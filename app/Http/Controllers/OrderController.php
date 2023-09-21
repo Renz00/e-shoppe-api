@@ -132,7 +132,7 @@ class OrderController extends Controller
         $deletedResult = Order::destroy($order->id);
 
         if ($deletedResult == true){
-            return response()->json(["result" => $deletedResult]);
+            return response()->json(["deleted" => true]);
         }
         else {
             return response()->json(['message' => 'An error occurred while deleting. #1-1'], 500);

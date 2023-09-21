@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Favourite;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class FavouriteController extends Controller
 {
@@ -29,14 +30,13 @@ class FavouriteController extends Controller
      */
     public function sortFavourites(Request $request)
     {
-        try {
-            $validateFilter = $request->validate([
+            $validator = Validator::make($request->all(), [
                 'sort' => 'required|string|max:50'
             ]);
-        }
-        catch (\Exception $e){
-            return response()->json($e);
-        }
+
+            if($validator->fails()){
+                return response()->json(['errors'=>$validator->messages()]);
+             }
         
         switch ($request->input('sort')){
             case 'asc':
@@ -64,19 +64,31 @@ class FavouriteController extends Controller
      */
     public function store(Request $request)
     {
-        $storedFavourite = Favourite::create([
-            "user_id" => $request->user_id,
-            "product_id" => $request->product_id,
-        ]);
-
-        if ($storedFavourite){
-            return response()->json(['favourite' => $storedFavourite]);
+        $fav = Favourite::where('user_id', $request->user_id)
+        ->where('product_id', $request->product_id)->get();
+        if (count($fav)<=0 ){
+            $storedFavourite = Favourite::create([
+                "user_id" => $request->user_id,
+                "product_id" => $request->product_id,
+            ]);
+    
+            if ($storedFavourite){
+                return response()->json(['favourite' => $storedFavourite]);
+            }
+            else {
+                return response()->json(['message' => 'Error occured while storing favourite. #1-2'], 500);
+            }
         }
         else {
-            return response()->json(['message' => 'Error occured while storing favourite. #1-1'], 500);
-        }
-
-        
+            $deletedResult = Favourite::where('user_id', $request->user_id)
+            ->where('product_id', $request->product_id)->delete();
+            if ($deletedResult == 1){
+                return response()->json(['deleted' => true]);
+            }
+            else {
+                return response()->json(['message' => 'Error occured while storing favourite. #1-1'], 500);
+            } 
+        }  
     }
 
     /**
