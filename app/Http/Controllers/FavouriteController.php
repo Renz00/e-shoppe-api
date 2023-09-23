@@ -4,19 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Favourite;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class FavouriteController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $favourites = Favourite::where('user_id', auth()->user())
-        ->orderBy('id', 'DESC')
+        $favourites = DB::table('favourites')
+        ->leftJoin('products', 'favourites.product_id', '=', 'products.id')
         ->paginate(12);
 
         return response()->json(["favourites" => $favourites]);
@@ -37,7 +38,7 @@ class FavouriteController extends Controller
             if($validator->fails()){
                 return response()->json(['errors'=>$validator->messages()]);
              }
-        
+
         switch ($request->input('sort')){
             case 'asc':
                 $favourites = Favourite::where('user_id', auth()->user())
@@ -71,7 +72,7 @@ class FavouriteController extends Controller
                 "user_id" => $request->user_id,
                 "product_id" => $request->product_id,
             ]);
-    
+
             if ($storedFavourite){
                 return response()->json(['favourite' => $storedFavourite]);
             }
@@ -87,8 +88,8 @@ class FavouriteController extends Controller
             }
             else {
                 return response()->json(['message' => 'Error occured while storing favourite. #1-1'], 500);
-            } 
-        }  
+            }
+        }
     }
 
     /**

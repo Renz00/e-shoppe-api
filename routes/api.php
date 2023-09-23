@@ -20,23 +20,25 @@ use App\Http\Controllers\ProductController;
 |
 */
 
-Route::prefix('/v1')->group(function () {
+//Product Routes
+Route::resource('products', ProductController::class);
+Route::get('/products/load-more/{limit}', [ProductController::class, 'loadMore'])->name('loadmore.products');
+Route::get('/products/fetch/paginated', [ProductController::class, 'paginatedProducts'])->name('paginated.products');
+Route::get('/products/search-products/{search_slug}', [ProductController::class, 'searchProducts'])->name('search.products');
+Route::post('/products/filter', [ProductController::class, 'filterProducts'])->name('filter.products');
 
-    Route::resource('products', ProductController::class);
-    Route::get('/products/load-more/{limit}', [ProductController::class, 'loadMore'])->name('loadmore.products');
-    Route::get('/products/fetch/paginated', [ProductController::class, 'paginatedProducts'])->name('paginated.products');
-    Route::get('/products/search-products/{search_slug}', [ProductController::class, 'searchProducts'])->name('search.products');
-    Route::post('/products/filter', [ProductController::class, 'filterProducts'])->name('filter.products');
+//Order Routes
+Route::resource('orders', OrderController::class)->middleware('auth:sanctum');
+Route::get('orders/status/{status}', [OrderController::class, 'fetchOrders'])->name('fetch.orders')->middleware('auth:sanctum');
 
-    Route::resource('orders', OrderController::class)->middleware('auth:sanctum');
-    Route::get('orders/status/{status}', [OrderController::class, 'fetchOrders'])->name('fetch.orders')->middleware('auth:sanctum');
+//User Routes
+Route::resource('users', UserController::class)->middleware('auth:sanctum');
 
-    Route::resource('users', UserController::class)->middleware('auth:sanctum');
+//Favourite Routes
+Route::post('/favourites/sort', [FavouriteController::class, 'sortFavourites'])->name('sort.favourites')->middleware('auth:sanctum');
+Route::post('/favourites', [FavouriteController::class, 'index'])->name('index.favourites')->middleware('auth:sanctum');
+Route::post('/favourites/store', [FavouriteController::class, 'store'])->name('store.favourites')->middleware('auth:sanctum');
 
-    Route::resource('/favourites', FavouriteController::class)->middleware('auth:sanctum');
-    Route::post('/favourites/sort', [FavouriteController::class, 'sortFavourites'])->name('sort.favourites')->middleware('auth:sanctum');
-
-});
 
 Route::prefix('/auth')->group(function () {
     Route::post('login', LoginController::class);
