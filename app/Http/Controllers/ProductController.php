@@ -46,17 +46,12 @@ class ProductController extends Controller
      */
     public function filterProducts(Request $request)
     {
-        // try {
-            Validator::make($request->all(), [
-                'category' => 'required',
-                'rating' => 'required',
-                'min_price' => 'required|numeric|max:50000|min:0',
-                'max_price' => 'required|numeric|max:50000|min:0'
-            ])->validate();
-        // }
-        // catch (\Exception $e){
-        //     return response()->json($e);
-        // }
+        Validator::make($request->all(), [
+            'category' => 'required',
+            'rating' => 'required',
+            'min_price' => 'required|numeric|min:1',
+            'max_price' => 'required|numeric|min:1'
+        ])->validate();
 
         $products = Product::whereIn('product_category', $request->category)
         ->whereIn('product_rating', $request->rating)
