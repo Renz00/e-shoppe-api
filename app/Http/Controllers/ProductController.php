@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Favourite;
 use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -98,7 +99,18 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Product $product)
-    {
+    {   
+        //If product is favourite of user, add isFavourite to product array
+        if (session()->has('user_id')){
+            $favourite = Favourite::where('user_id', session('user_id'))->where('product_id', $product->id)->get();
+            if (count($favourite)>0){
+                //pushing a key value pair in product array
+                $product['isFavourite'] = true;
+            }
+            else {
+                $product['isFavourite'] = false;
+            }
+        }
         return response()->json(["products" => $product]);
     }
 

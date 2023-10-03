@@ -18,6 +18,7 @@ class LogoutController extends Controller
         $result = $request->user()->currentAccessToken()->delete();
 
         if ($result == 1){
+            session()->forget('user_id');
             return response()->json(['result' => $result]);
         }
         else {

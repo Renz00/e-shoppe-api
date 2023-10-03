@@ -25,12 +25,13 @@ class RegisterController extends Controller
             'password' => ['required', 'confirmed', 'min:8']
         ]);
 
+        //Validate form data
         if($validator->fails()){
             return response()->json(['errors'=>$validator->messages()]);
          }
 
         $hashedPassword = Hash::make($request->password);
-
+    
         $user = User::create([
             "name" => $request->name,
             "email" => $request->email,
@@ -40,6 +41,10 @@ class RegisterController extends Controller
         ]);
 
         if ($user->first()){
+            //Adding user data to session
+            session([
+                'user_id' => $user->id,
+            ]);
             return response()->json(['result' => 1]);
         }
         else {

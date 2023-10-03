@@ -28,15 +28,23 @@ class LoginController extends Controller
             'exists' => 'Your E-mail does not exist.',
         ]); // adding custom error messages
 
+        //Validate form data
         if ($validator->fails()){
             return response()->json(['errors'=>$validator->messages()]);
         }
 
         $user = User::where('email', $request->email)->first();
+
+        //Validate password
         if ($user && !Hash::check($request->password, $user->password)){
             $errorMessages = $validator->messages()->add('password', 'Password is incorrect');
             return response()->json(['errors'=>$errorMessages]);
         }
+
+        //Adding user data to session
+        session([
+            'user_id' => $user->id,
+        ]);
 
         return response()->json([
             'user' => [
