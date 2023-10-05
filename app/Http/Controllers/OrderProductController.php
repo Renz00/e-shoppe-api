@@ -34,6 +34,8 @@ class OrderProductController extends Controller
                 $result = Order_Product::create([
                     'order_id' => $storedOrder->id,
                     'product_id' => $product['id'],
+                    'product_price' => $product['price'],
+                    'product_discount' => $product['discount'],
                     'total_price' => $product['total_price'],
                     'count' => $product['count']
                 ]);

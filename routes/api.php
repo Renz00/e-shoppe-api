@@ -28,15 +28,16 @@ Route::get('/products/search-products/{search_slug}', [ProductController::class,
 Route::post('/products/filter', [ProductController::class, 'filterProducts'])->name('filter.products');
 
 //Order Routes
-Route::resource('orders', OrderController::class)->middleware('auth:sanctum');
+Route::post('orders/store', [OrderController::class, 'store'])->name('store.orders')->middleware('auth:sanctum');
+Route::get('orders/{id}', [OrderController::class, 'show'])->name('show.orders')->middleware('auth:sanctum');
 Route::get('orders/status/{status}', [OrderController::class, 'fetchOrders'])->name('fetch.orders')->middleware('auth:sanctum');
 
 //User Routes
 Route::resource('users', UserController::class)->middleware('auth:sanctum');
 
 //Favourite Routes
+Route::get('/favourites', [FavouriteController::class, 'index'])->name('index.favourites')->middleware('auth:sanctum');
 Route::post('/favourites/sort', [FavouriteController::class, 'sortFavourites'])->name('sort.favourites')->middleware('auth:sanctum');
-Route::post('/favourites', [FavouriteController::class, 'index'])->name('index.favourites')->middleware('auth:sanctum');
 Route::post('/favourites/store', [FavouriteController::class, 'store'])->name('store.favourites')->middleware('auth:sanctum');
 
 

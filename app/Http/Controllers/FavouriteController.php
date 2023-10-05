@@ -11,12 +11,13 @@ class FavouriteController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
+        $user_id = session()->get('user_id');
         $favourites = DB::table('favourites')
+        ->where('favourites.user_id', '=', $user_id)
         ->leftJoin('products', 'favourites.product_id', '=', 'products.id')
         ->paginate(12);
 
@@ -24,7 +25,7 @@ class FavouriteController extends Controller
     }
 
     /**
-     * Fetch filtered products.
+     * Fetch filtered Favourites.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

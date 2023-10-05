@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\OrderProductController;
 
 class OrderController extends Controller
@@ -15,9 +17,9 @@ class OrderController extends Controller
     {
         $this->OrderProductController = $OrderProductController;
 
-        //Will check the OrderPolicy.php for authorization
-        //for all methods using the Order model
-        $this->authorizeResource(Order::class);
+        // //Will check the OrderPolicy.php for authorization
+        // //for all methods using the Order model
+        // $this->authorizeResource(Order::class);
 
     }
 
@@ -33,7 +35,11 @@ class OrderController extends Controller
      */
     public function fetchOrders($status)
     {
-        $orders = Order::where('order_status', $status)->paginate(12);
+        $user_id = session()->get('user_id');
+        $orders = Order::where('order_status', $status)
+        ->where('user_id', $user_id)
+        ->paginate(12);
+        
         return response()->json($orders);
     }
 
@@ -45,17 +51,34 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->order, [
+            'user_id' => ['required', 'numeric'],
+            'item_count' => ['required', 'numeric'],
+            'status' => ['required', 'numeric'],
+            'grand_total' => ['required', 'numeric'],
+            'sub_total' => ['required', 'numeric'],
+            'discount' => ['required', 'numeric']
+        ]);
+
+         //Validate form data
+         if($validator->fails()){
+            return response()->json(['errors'=>$validator->messages()]);
+         }
+
         // try {
             //Will return the data of the stored order
             $storedOrder = Order::create([
-                'user_id' => $request->order['id'],
-                'item_count' => $request->order['count'],
+                'user_id' => $request->order['user_id'],
+                'item_count' => $request->order['item_count'],
                 'order_status' => $request->order['status'],
-                'order_total' => $request->order['total'],
+                'order_sub_total' => $request->order['sub_total'],
+                'order_grand_total' => $request->order['grand_total'],
                 'order_discount' => $request->order['discount'],
-                'order_courier' => $request->order['courier'],
-                'order_payment_method' => $request->order['payment_method'],
-                'order_delivery_address' => $request->order['delivery_address'],
+                'order_courier' => $request->order['courier']['id'],
+                'order_courier_price' => $request->order['courier']['price'],
+                'order_payment_method' => $request->order['payment_method']['id'],
+                //Convert delivery address object to a json string
+                'order_delivery_address' => json_encode($request->order['delivery_address']),
             ]);
 
             $result = $this->OrderProductController->store($storedOrder, $request->input('order_products'));
@@ -74,13 +97,17 @@ class OrderController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Order  $order
+     * @param Int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
-    {
-        $order_products = $this->OrderProductController->show($order->id);
+    public function show($id)
+    {   
+        $order = DB::table('orders')
+        ->where('orders.id', '=', $id)
+        ->leftJoin('couriers', 'orders.order_courier', '=', 'couriers.id')
+        ->leftJoin('payments', 'orders.order_payment_method', '=', 'payments.id')
+        ->get();
+        $order_products = $this->OrderProductController->show($id);
         return response()->json(["order" => $order, "order_products" => $order_products]);
     }
 

@@ -14,16 +14,18 @@ class Order extends Model
         'user_id',
         'item_count',
         'order_status',
-        'order_total',
+        'order_sub_total',
+        'order_grand_total',
         'order_discount',
         'order_courier',
+        'order_courier_price',
         'order_payment_method',
         'order_delivery_address',
     ];
 
-    // public function user(){
-    //     return $this->belongsTo(User::class, 'id');
-    // }
+    public function user(){
+        return $this->belongsTo(User::class, 'id');
+    }
     
     // public function status(){
     //     return $this->hasOne(Status::class, 'id');

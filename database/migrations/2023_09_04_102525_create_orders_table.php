@@ -18,8 +18,10 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->integer('item_count');
             $table->foreignId('order_status');
-            $table->integer('order_total');
-            $table->integer('order_discount');
+            $table->float('order_grand_total', 8, 2);
+            $table->float('order_sub_total', 8, 2);
+            $table->float('order_discount', 8, 2);
+            $table->float('order_shipping_price', 8, 2);
             $table->foreignId('order_courier');
             $table->foreignId('order_payment_method');
             $table->text('order_delivery_address');

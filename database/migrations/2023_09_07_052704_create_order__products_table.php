@@ -17,6 +17,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->float('product_price', 8, 2);
+            $table->integer('product_discount');
             $table->float('total_price', 8, 2);
             $table->integer('count');
             $table->timestamps();

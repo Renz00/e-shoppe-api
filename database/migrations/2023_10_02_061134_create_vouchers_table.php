@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('voucher_name');
             $table->integer('voucher_price_discount')->default(0);
             $table->integer('voucher_shipping_discount')->default(0);
-            $table->double('voucher_minimum_price', 11, 2)->default(0);
-            $table->string('voucher_category')->nullable()->default(null);
             $table->timestamps();
         });
     }
