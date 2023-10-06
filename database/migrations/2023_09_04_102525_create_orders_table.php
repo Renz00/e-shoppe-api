@@ -25,6 +25,7 @@ return new class extends Migration
             $table->foreignId('order_courier');
             $table->foreignId('order_payment_method');
             $table->text('order_delivery_address');
+            $table->boolean('order_is_cancelled')->default(false);
             $table->timestamps();
         });
     }

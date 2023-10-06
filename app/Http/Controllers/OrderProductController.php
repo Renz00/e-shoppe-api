@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Order_Product;
+use Illuminate\Support\Facades\DB;
 
 class OrderProductController extends Controller
 {
@@ -70,7 +71,16 @@ class OrderProductController extends Controller
      */
     public function show($orderId)
     {
-        return Order_Product::where('order_id', $orderId)->get();
+        $order_products = DB::table('order__products')
+        ->where('order__products.order_id', '=', $orderId)
+        ->leftJoin('products', 'order__products.product_id', '=', 'products.id')
+        ->leftJoin('categories', 'products.product_category', '=', 'categories.id')
+        ->select('order__products.id', 'order__products.order_id', 'order__products.product_id', 'order__products.count', 
+        'order__products.product_discount', 'order__products.product_price', 'order__products.total_price', 
+        'products.product_name', 'products.product_category', 'categories.category_name')
+        ->get();
+
+        return $order_products;
     }
 
     /**

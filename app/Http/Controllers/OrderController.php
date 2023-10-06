@@ -73,12 +73,12 @@ class OrderController extends Controller
                 'order_status' => $request->order['status'],
                 'order_sub_total' => $request->order['sub_total'],
                 'order_grand_total' => $request->order['grand_total'],
+                'order_voucher' => $request->order['voucher'],
                 'order_discount' => $request->order['discount'],
-                'order_courier' => $request->order['courier']['id'],
-                'order_courier_price' => $request->order['courier']['price'],
-                'order_payment_method' => $request->order['payment_method']['id'],
-                //Convert delivery address object to a json string
-                'order_delivery_address' => json_encode($request->order['delivery_address']),
+                'order_courier' => $request->order['courier'],
+                'order_shipping_price' => $request->order['shipping_price'],
+                'order_payment_method' => $request->order['payment_method'],
+                'order_delivery_address' => $request->order['delivery_address'],
             ]);
 
             $result = $this->OrderProductController->store($storedOrder, $request->input('order_products'));
@@ -102,11 +102,7 @@ class OrderController extends Controller
      */
     public function show($id)
     {   
-        $order = DB::table('orders')
-        ->where('orders.id', '=', $id)
-        ->leftJoin('couriers', 'orders.order_courier', '=', 'couriers.id')
-        ->leftJoin('payments', 'orders.order_payment_method', '=', 'payments.id')
-        ->get();
+        $order = Order::find($id)->get();
         $order_products = $this->OrderProductController->show($id);
         return response()->json(["order" => $order, "order_products" => $order_products]);
     }

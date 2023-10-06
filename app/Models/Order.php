@@ -16,9 +16,10 @@ class Order extends Model
         'order_status',
         'order_sub_total',
         'order_grand_total',
+        'order_voucher',
         'order_discount',
         'order_courier',
-        'order_courier_price',
+        'order_shipping_price',
         'order_payment_method',
         'order_delivery_address',
     ];
