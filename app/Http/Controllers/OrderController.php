@@ -102,9 +102,30 @@ class OrderController extends Controller
      */
     public function show($id)
     {   
-        $order = Order::find($id)->get();
+        $order = Order::where('id', $id)->get();
         $order_products = $this->OrderProductController->show($id);
         return response()->json(["order" => $order, "order_products" => $order_products]);
+    }
+
+    /**
+     * Update order
+     * @param Int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function cancelOrder($id)
+    {   
+        $order = Order::find($id);
+ 
+        $order->order_is_cancelled = true;
+        $order->save();
+
+        if ($order->first()){
+            return response()->json(["result" => true]);
+        }
+        else {
+            return response()->json(["result" => false]);
+        }
+
     }
 
     /**

@@ -31,6 +31,8 @@ Route::post('/products/filter', [ProductController::class, 'filterProducts'])->n
 Route::post('orders/store', [OrderController::class, 'store'])->name('store.orders')->middleware('auth:sanctum');
 Route::get('orders/{id}', [OrderController::class, 'show'])->name('show.orders')->middleware('auth:sanctum');
 Route::get('orders/status/{status}', [OrderController::class, 'fetchOrders'])->name('fetch.orders')->middleware('auth:sanctum');
+Route::get('orders/cancel/{id}', [OrderController::class, 'cancelOrder'])->name('cancel.orders')->middleware('auth:sanctum');
+
 
 //User Routes
 Route::resource('users', UserController::class)->middleware('auth:sanctum');
