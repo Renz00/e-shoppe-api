@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -10,13 +11,13 @@ use App\Http\Controllers\OrderProductController;
 
 class OrderController extends Controller
 {
-
+    private $pages;
     protected $OrderProductController;
 
     public function __construct(OrderProductController $OrderProductController)
     {
         $this->OrderProductController = $OrderProductController;
-
+        $this->pages = 12;
         // //Will check the OrderPolicy.php for authorization
         // //for all methods using the Order model
         // $this->authorizeResource(Order::class);
@@ -26,21 +27,6 @@ class OrderController extends Controller
     public function index(){
         $orders = Order::all();
         return response()->json(['orders' => $orders]);
-    }
-
-    /**
-     * Display a listing of the resource.
-     * @param Int $status
-     * @return \Illuminate\Http\Response
-     */
-    public function fetchOrders($status)
-    {
-        $user_id = session()->get('user_id');
-        $orders = Order::where('order_status', $status)
-        ->where('user_id', $user_id)
-        ->paginate(12);
-        
-        return response()->json($orders);
     }
 
     /**
@@ -108,6 +94,37 @@ class OrderController extends Controller
     }
 
     /**
+     * Display orders of current user.
+     * @param String $user_status
+     * @return \Illuminate\Http\Response
+     */
+    public function userOrders($order_status)
+    {   
+        $user_id = session()->get('user_id');
+        $status = Str::replace('-', ' ', $order_status);
+        switch ($status){
+            case 'packing':
+                $status = 1;
+                break;
+            case 'in transit':
+                $status = 2;
+                break;
+            case 'arrived':
+                $status = 3;
+                break;
+            case 'cancelled':
+                $status = 4;
+                break;
+            default:
+                $status = 1;
+                break;  
+        }
+        return [$user_id, $status];
+        $order = Order::where('user_id', $user_id)->where('order_status', $status)->paginate($this->pages);
+        return response()->json(["order" => $order]);
+    }
+
+    /**
      * Update order
      * @param Int $id
      * @return \Illuminate\Http\Response
@@ -117,6 +134,7 @@ class OrderController extends Controller
         $order = Order::find($id);
  
         $order->order_is_cancelled = true;
+        $order->order_status = 4; // 4 means cancelled
         $order->save();
 
         if ($order->first()){
