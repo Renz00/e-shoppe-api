@@ -119,7 +119,6 @@ class OrderController extends Controller
                 $status = 1;
                 break;  
         }
-        return [$user_id, $status];
         $order = Order::where('user_id', $user_id)->where('order_status', $status)->paginate($this->pages);
         return response()->json(["order" => $order]);
     }
