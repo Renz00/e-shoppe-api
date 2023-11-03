@@ -14,9 +14,11 @@ class LogoutController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request)
-    {
-        $result = $request->user()->currentAccessToken()->delete();
+    {   
+        // $result = $request->user()->currentAccessToken()->delete();
 
+        $result = $request->user()->tokens()->delete();
+        
         if ($result == 1){
             session()->forget('user_id');
             return response()->json(['result' => $result]);

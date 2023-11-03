@@ -21,26 +21,31 @@ class LoginController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => ['required', 'exists:App\Models\User,email'],
-            'password' => ['required','min:8','max:50', ]
-        ], $messages = [
-            'exists' => 'Your E-mail does not exist.',
-        ]); // adding custom error messages
-
-        //Validate form data
-        if ($validator->fails()){
-            return response()->json(['errors'=>$validator->messages()]);
+        if ($request->remember != true){
+            $validator = Validator::make($request->all(), [
+                'email' => ['required', 'exists:App\Models\User,email'],
+                'password' => ['required','min:8','max:50', ]
+            ], $messages = [
+                'exists' => 'Your E-mail does not exist.',
+            ]); // adding custom error messages
+    
+            //Validate form data
+            if ($validator->fails()){
+                return response()->json(['errors'=>$validator->messages()]);
+            }
+    
+            $user = User::where('email', $request->email)->first();
+    
+            //Validate password
+            if ($user && !Hash::check($request->password, $user->password)){
+                $errorMessages = $validator->messages()->add('password', 'Password is incorrect');
+                return response()->json(['errors'=>$errorMessages]);
+            }
         }
-
-        $user = User::where('email', $request->email)->first();
-
-        //Validate password
-        if ($user && !Hash::check($request->password, $user->password)){
-            $errorMessages = $validator->messages()->add('password', 'Password is incorrect');
-            return response()->json(['errors'=>$errorMessages]);
+        else {
+            $user = User::where('email', $request->email)->first();
         }
-
+       
         //Adding user data to session
         session([
             'user_id' => $user->id,

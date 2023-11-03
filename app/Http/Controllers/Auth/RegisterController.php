@@ -38,9 +38,9 @@ class RegisterController extends Controller
             "phone" => $request->phone,
             "role" => "customer",
             "password" => $hashedPassword
-        ]);
+        ])->first();
 
-        if ($user->first()){
+        if ($user){
             //Adding user data to session
             session([
                 'user_id' => $user->id,
