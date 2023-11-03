@@ -29,58 +29,6 @@ class OrderController extends Controller
         return response()->json(['orders' => $orders]);
     }
 
-    public function convertStatus($status){
-        switch ($status){
-            case 'packing':
-                $status = 1;
-                break;
-            case 'in transit':
-                $status = 2;
-                break;
-            case 'arrived':
-                $status = 3;
-                break;
-            case 'cancelled':
-                $status = 4;
-                break;
-            default:
-                $status = 1;
-                break;  
-        }
-        return $status;
-    }
-
-    /**
-     * Display orders of current user.
-     * @param \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function sortOrders(Request $request)
-    {   
-        $user_id = session()->get('user_id');
-        $status = Str::replace('-', ' ', $request->status);
-        $status = $this->convertStatus($status);
-        
-        if ($status == 'asc'){
-            $order = DB::table('orders')
-            ->where('orders.user_id', '=', $user_id)
-            ->where('orders.order_status', $status)
-            ->leftJoin('statuses', 'orders.order_status', '=', 'statuses.id')
-            ->orderBy('orders.id', 'asc')
-            ->paginate($this->pages);
-        }
-        else {
-            $order = DB::table('orders')
-            ->where('orders.user_id', '=', $user_id)
-            ->where('orders.order_status', $status)
-            ->leftJoin('statuses', 'orders.order_status', '=', 'statuses.id')
-            ->orderBy('orders.id', 'desc')
-            ->paginate($this->pages);
-        }
-       
-        return response()->json(["order" => $order]);
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -154,15 +102,24 @@ class OrderController extends Controller
     {   
         $user_id = session()->get('user_id');
         $status = Str::replace('-', ' ', $order_status);
-        $status = $this->convertStatus($status);
-
-        $order = DB::table('orders')
-        ->where('orders.user_id', '=', $user_id)
-        ->where('orders.order_status', $status)
-        ->leftJoin('statuses', 'orders.order_status', '=', 'statuses.id')
-        ->paginate($this->pages);
-
-        //$order = Order::where('user_id', $user_id)->where('order_status', $status)->paginate($this->pages);
+        switch ($status){
+            case 'packing':
+                $status = 1;
+                break;
+            case 'in transit':
+                $status = 2;
+                break;
+            case 'arrived':
+                $status = 3;
+                break;
+            case 'cancelled':
+                $status = 4;
+                break;
+            default:
+                $status = 1;
+                break;  
+        }
+        $order = Order::where('user_id', $user_id)->where('order_status', $status)->paginate($this->pages);
         return response()->json(["order" => $order]);
     }
 

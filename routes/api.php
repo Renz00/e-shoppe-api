@@ -32,7 +32,6 @@ Route::post('orders/store', [OrderController::class, 'store'])->name('store.orde
 Route::get('orders/{id}', [OrderController::class, 'show'])->name('show.orders')->middleware('auth:sanctum');
 Route::get('orders/cancel/{id}', [OrderController::class, 'cancelOrder'])->name('cancel.orders')->middleware('auth:sanctum');
 Route::get('orders/status/{order_status}', [OrderController::class, 'userOrders'])->name('user.orders')->middleware('auth:sanctum');
-Route::post('orders/sort', [OrderController::class, 'sortOrders'])->name('sort.orders')->middleware('auth:sanctum');
 
 
 //User Routes
