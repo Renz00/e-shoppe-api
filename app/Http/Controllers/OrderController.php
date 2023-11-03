@@ -160,6 +160,9 @@ class OrderController extends Controller
         ->where('orders.user_id', '=', $user_id)
         ->where('orders.order_status', $status)
         ->leftJoin('statuses', 'orders.order_status', '=', 'statuses.id')
+        ->select('orders.id', 'orders.item_count', 'orders.order_courier', 'orders.order_delivery_address', 
+        'orders.order_discount', 'orders.order_grand_total', 'orders.order_is_cancelled', 'orders.order_payment_method',
+        'orders.order_shipping_price', 'orders.order_sub_total', 'orders.order_voucher', 'statuses.status_name', 'orders.user_id')
         ->orderBy('orders.id', 'asc')
         ->paginate($this->pages);
 
