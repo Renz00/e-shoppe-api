@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Order;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -18,8 +19,8 @@ class OrderController extends Controller
     {
         $this->OrderProductController = $OrderProductController;
         $this->pages = 12;
-        // //Will check the OrderPolicy.php for authorization
-        // //for all methods using the Order model
+        //Will check the OrderPolicy.php for authorization
+        //for all methods using the Order model
         // $this->authorizeResource(Order::class);
 
     }
@@ -61,19 +62,27 @@ class OrderController extends Controller
         $status = Str::replace('-', ' ', $request->status);
         $status = $this->convertStatus($status);
         
-        if ($status == 'asc'){
+        if ($request->sort == 'asc'){
             $order = DB::table('orders')
-            ->where('orders.user_id', '=', $user_id)
+            ->where('orders.user_id', $user_id)
             ->where('orders.order_status', $status)
             ->leftJoin('statuses', 'orders.order_status', '=', 'statuses.id')
+            ->select('orders.id', 'orders.item_count', 'orders.order_courier', 'orders.order_delivery_address', 
+            'orders.order_discount', 'orders.order_grand_total', 'orders.order_is_cancelled', 'orders.order_payment_method',
+            'orders.order_shipping_price', 'orders.order_sub_total', 'orders.order_voucher', 'statuses.status_name', 
+            'orders.user_id', 'orders.order_eta')
             ->orderBy('orders.id', 'asc')
             ->paginate($this->pages);
         }
         else {
             $order = DB::table('orders')
-            ->where('orders.user_id', '=', $user_id)
+            ->where('orders.user_id', $user_id)
             ->where('orders.order_status', $status)
             ->leftJoin('statuses', 'orders.order_status', '=', 'statuses.id')
+            ->select('orders.id', 'orders.item_count', 'orders.order_courier', 'orders.order_delivery_address', 
+            'orders.order_discount', 'orders.order_grand_total', 'orders.order_is_cancelled', 'orders.order_payment_method',
+            'orders.order_shipping_price', 'orders.order_sub_total', 'orders.order_voucher', 'statuses.status_name', 
+            'orders.user_id', 'orders.order_eta')
             ->orderBy('orders.id', 'desc')
             ->paginate($this->pages);
         }
@@ -105,6 +114,8 @@ class OrderController extends Controller
 
         // try {
             //Will return the data of the stored order
+            $currDate = Carbon::now();
+            $eta = $currDate->addDays(4);
             $storedOrder = Order::create([
                 'user_id' => $request->order['user_id'],
                 'item_count' => $request->order['item_count'],
@@ -117,6 +128,7 @@ class OrderController extends Controller
                 'order_shipping_price' => $request->order['shipping_price'],
                 'order_payment_method' => $request->order['payment_method'],
                 'order_delivery_address' => $request->order['delivery_address'],
+                'order_eta' => $eta
             ]);
 
             $result = $this->OrderProductController->store($storedOrder, $request->input('order_products'));
@@ -157,13 +169,14 @@ class OrderController extends Controller
         $status = $this->convertStatus($status);
 
         $order = DB::table('orders')
-        ->where('orders.user_id', '=', $user_id)
+        ->where('orders.user_id', $user_id)
         ->where('orders.order_status', $status)
         ->leftJoin('statuses', 'orders.order_status', '=', 'statuses.id')
         ->select('orders.id', 'orders.item_count', 'orders.order_courier', 'orders.order_delivery_address', 
         'orders.order_discount', 'orders.order_grand_total', 'orders.order_is_cancelled', 'orders.order_payment_method',
-        'orders.order_shipping_price', 'orders.order_sub_total', 'orders.order_voucher', 'statuses.status_name', 'orders.user_id')
-        ->orderBy('orders.id', 'asc')
+        'orders.order_shipping_price', 'orders.order_sub_total', 'orders.order_voucher', 'statuses.status_name', 
+        'orders.user_id', 'orders.order_eta')
+        ->orderBy('orders.id', 'desc')
         ->paginate($this->pages);
 
         return response()->json(["order" => $order]);
