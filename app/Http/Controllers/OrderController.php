@@ -59,7 +59,7 @@ class OrderController extends Controller
     public function sortOrders(Request $request)
     {   
         $user_id = session()->get('user_id');
-        $status = Str::replace('-', ' ', $request->status);
+        $status = Str::lower(Str::replace('-', ' ', $request->status));
         $status = $this->convertStatus($status);
         
         if ($request->sort == 'asc'){
@@ -115,7 +115,7 @@ class OrderController extends Controller
         // try {
             //Will return the data of the stored order
             $currDate = Carbon::now();
-            $eta = $currDate->addDays(4);
+            $eta = $currDate->addDays(4)->format('Y-m-d');
             $storedOrder = Order::create([
                 'user_id' => $request->order['user_id'],
                 'item_count' => $request->order['item_count'],

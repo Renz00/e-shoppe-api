@@ -22,6 +22,7 @@ class Order extends Model
         'order_shipping_price',
         'order_payment_method',
         'order_delivery_address',
+        'order_eta'
     ];
 
     public function user(){
