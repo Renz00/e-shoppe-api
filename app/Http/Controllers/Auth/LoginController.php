@@ -21,29 +21,24 @@ class LoginController extends Controller
      */
     public function __invoke(Request $request)
     {
-        if ($request->remember != true){
-            $validator = Validator::make($request->all(), [
-                'email' => ['required', 'exists:App\Models\User,email'],
-                'password' => ['required','min:8','max:50', ]
-            ], $messages = [
-                'exists' => 'Your E-mail does not exist.',
-            ]); // adding custom error messages
-    
-            //Validate form data
-            if ($validator->fails()){
-                return response()->json(['errors'=>$validator->messages()]);
-            }
-    
-            $user = User::where('email', $request->email)->first();
-    
-            //Validate password
-            if ($user && !Hash::check($request->password, $user->password)){
-                $errorMessages = $validator->messages()->add('password', 'Password is incorrect');
-                return response()->json(['errors'=>$errorMessages]);
-            }
+        $validator = Validator::make($request->all(), [
+            'email' => ['required', 'exists:App\Models\User,email'],
+            'password' => ['required','min:8','max:50', ]
+        ], $messages = [
+            'exists' => 'Your E-mail does not exist.',
+        ]); // adding custom error messages
+
+        //Validate form data
+        if ($validator->fails()){
+            return response()->json(['errors'=>$validator->messages()]);
         }
-        else {
-            $user = User::where('email', $request->email)->first();
+
+        $user = User::where('email', $request->email)->first();
+
+        //Validate password
+        if ($user && !Hash::check($request->password, $user->password)){
+            $errorMessages = $validator->messages()->add('password', 'Password is incorrect');
+            return response()->json(['errors'=>$errorMessages]);
         }
        
         //Adding user data to session
@@ -53,10 +48,9 @@ class LoginController extends Controller
 
         return response()->json([
             'user' => [
-                'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'role' => $user->role
+                'role' => $user->role,
             ],
             'token' => $user->createToken('api_token')->plainTextToken
         ]);

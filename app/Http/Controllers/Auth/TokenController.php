@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class RevokeTokenController extends Controller
+class TokenController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -15,9 +15,6 @@ class RevokeTokenController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $request->user()->tokens()->delete();
-        return response()->json([
-            'result' => true
-        ]);
+        //
     }
 }
