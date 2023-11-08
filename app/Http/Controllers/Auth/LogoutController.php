@@ -15,9 +15,7 @@ class LogoutController extends Controller
      */
     public function __invoke(Request $request)
     {   
-        // $result = $request->user()->currentAccessToken()->delete();
-
-        $result = $request->user()->tokens()->delete();
+        $result = $request->user()->currentAccessToken()->delete();
         
         if ($result == 1){
             session()->forget('user_id');
