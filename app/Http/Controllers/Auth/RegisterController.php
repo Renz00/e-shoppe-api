@@ -45,7 +45,7 @@ class RegisterController extends Controller
             session([
                 'user_id' => $user->id,
             ]);
-            return response()->json(['result' => 1]);
+            return response()->json(['result' => 1, 'user_id' => $user->id]);
         }
         else {
             return response()->json(['message' => "An error occured while registering. #1-1"]);

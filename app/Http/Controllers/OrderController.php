@@ -98,6 +98,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        
         $validator = Validator::make($request->order, [
             'user_id' => ['required', 'numeric'],
             'item_count' => ['required', 'numeric'],
